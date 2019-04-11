@@ -1,0 +1,176 @@
+// Graphviz Tutorial
+
+// This file is a specification for a kafka streams application architecture.
+// The specification is based on the diagram at:
+// https://kafka.apache.org/21/documentation/streams/architecture
+
+// The specfification below is in the DOT language. It can be converted into a
+// diagram using the tools that come with the graphviz package. You can
+// download graphviz from https://www.graphviz.org/. Post installation, verify
+// <graphviz-installation-path>/Graphviz<ver>/bin is added to the system path.
+
+// Command to generate diagram using "dot" layout- 
+//   dot -Tsvg -O kafka_streams_architecture.gv
+
+//    -Tsvg creates output as an image file in the svg format. Other formats
+//  supported are png, jpg etc.
+
+digraph g1
+{
+  compound=true; // If true, allow edges between clusters.
+  newrank=true;
+  edge[dir=none color=darkslategrey arrowhead=vee arrowtail=vee]
+  node[penwidth=3]
+
+  subgraph cluster_inputStreams
+  {
+    label="Input kafka Streams"
+    style = invis // removes border of cluster
+    node[color = "cadetblue3" style = filled fillcolor= "cadetblue1"]
+    is1[shape = record label = "{|||||}"]
+    is2[shape = record label = "{|||||}"]
+    is3[shape = record label = "{|||||}"]
+    is4[shape = record label = "{|||||}"]
+    lbl_txt_is[style = unfilled shape = plaintext label = "Input Kafka Streams"]
+   
+    {rank = same; is1;is2;is3;is4,lbl_txt_is}; // ensures all nodes are laid out horizontally. 
+    is1->is2->is3->is4-> lbl_txt_is [style = invis] // force label to the right. 
+
+  }
+
+  subgraph cluster_main
+  {
+    color=darkslategrey // border color
+
+    subgraph cluster_consumer1
+    {
+      labeljust="l" // position of label
+      fontcolor=coral1
+      label = "Stream Thread 1" 
+
+      // Label text can be made bold using HTML attributes. 
+      cs_1[shape=box label=<<B>Consumer 1</B>> style=filled fillcolor = gainsboro fontcolor=coral1];
+      
+      // Subgraph for 
+      subgraph cluster_cs1_n1
+      {
+        labeljust="l" // position of label
+        fontcolor=coral1
+        label = "Task 1-1" 
+
+        style=filled
+        fillcolor = gainsboro
+        color=cadetblue
+
+        cs1_n1_4[shape=box3d color=cadetblue label="\n State \n Store"] 
+        node[shape=circle label="" color=cadetblue]  
+        {cs1_n1_1 cs1_n1_2} -> cs1_n1_3 -> cs1_n1_5[color=azure3 penwidth=4]
+        {rank=same; cs1_n1_4; cs1_n1_5} 
+        cs1_n1_3 -> cs1_n1_4[style=dashed dir=forward]
+        cs1_n1_4 -> cs1_n1_5[style=dashed dir=back] // reverse arrow to keep state store on right side. 
+      }
+
+      subgraph cluster_cs1_n2
+      {
+        labeljust="r" // position of label
+        fontcolor=coral1
+        label = "Task 1-p"
+
+        style=filled
+        fillcolor = gainsboro
+        color=cadetblue
+        node[shape=circle label="" color=cadetblue]
+        cs1_n2_4[shape=box3d label="\n State \n Store"]   
+        {cs1_n2_1 cs1_n2_2} -> cs1_n2_3 -> cs1_n2_5[color=azure3 penwidth=4]
+        {rank=same; cs1_n2_4; cs1_n2_5}
+        cs1_n2_3 -> cs1_n2_4[style=dashed dir=forward]
+        cs1_n2_4 -> cs1_n2_5[style=dashed dir=back]
+
+        
+      }
+
+      // Another way to make label text bold is using html font tags. 
+      prdc_1[shape=box label=<<FONT FACE="Arial Black">Producer 1</FONT>> style=filled fillcolor=gainsboro fontcolor=coral1]; 
+      cs_1 -> cs1_n1_1[style="dashed" ]
+      cs_1 -> cs1_n1_2[style="dashed"]
+      cs_1 -> cs1_n2_1[style="dashed"]
+      cs_1 -> cs1_n2_2[style="dashed" label="Record Buffers" fontcolor=coral1]
+
+      {cs1_n1_4 cs1_n1_5 cs1_n2_4 cs1_n2_5 } -> prdc_1 [style=dashed penwidth=0.5]
+    }
+
+    subgraph cluster_consumern
+    {
+      labeljust="r" // position of label
+      fontcolor=coral1
+      label = "Stream Thread n"
+      
+      cs_n[shape=box label=<<B>Consumer n</B>> style=filled fillcolor=gainsboro fontcolor=coral1];
+      subgraph cluster_csn_n1
+      {
+        labeljust="l" // position of label
+        fontcolor=coral1
+        label = "Task n-1" 
+
+        style=filled
+        fillcolor = gainsboro
+        color=cadetblue
+        node[shape=circle label="" color=cadetblue] 
+        csn_n1_4[shape=box3d label="\n State \n Store"] 
+        {csn_n1_1 csn_n1_2} -> csn_n1_3 -> csn_n1_5[color=azure3 penwidth=4]
+        {rank=same; csn_n1_4; csn_n1_5}
+        csn_n1_3 -> csn_n1_4 [style=dashed dir=forward]
+        csn_n1_4 -> csn_n1_5[style=dashed dir=back]
+      }
+
+      subgraph cluster_csn_n2
+      {
+        labeljust="r" // position of label
+        fontcolor=coral1
+        label = "Task n-q" 
+
+        style=filled
+        fillcolor = gainsboro
+        color=cadetblue
+        node[shape=circle label="" color=cadetblue] 
+        csn_n2_4[shape=box3d label="\n State \n Store"]
+        {csn_n2_1 csn_n2_2} -> csn_n2_3 -> csn_n2_5 [color=azure3 penwidth=4]
+        {rank=same; csn_n2_4; csn_n2_5}
+        csn_n2_3 -> csn_n2_4 [style=dashed dir=forward]
+        csn_n2_4 -> csn_n2_5[style=dashed dir=back]
+      }
+      prdc_n[shape=box label=<<FONT FACE="Arial Black">Producer n</FONT>>style=filled fillcolor=gainsboro fontcolor=coral1];
+      cs_n -> csn_n1_1[style = "dashed"]
+      cs_n -> csn_n1_2[style = "dashed"]
+      cs_n -> csn_n2_1[style = "dashed"]
+      cs_n -> csn_n2_2[style = "dashed" label="Record Buffers" fontcolor=coral1]
+      {csn_n1_4 csn_n1_5 csn_n2_4 csn_n2_5 } -> prdc_n [style=dashed penwidth=0.5]
+     }
+
+  }
+
+  {is1 is2} -> cs_1 [style=dashed color="cadetblue3" penwidth=0.7]
+  {is3 is4} -> cs_n [style=dashed color="cadetblue3" penwidth=0.7]
+  {prdc_1 prdc_n} -> {os1 os2 os3 os4} [style=dashed color="cadetblue3" penwidth=0.7]
+
+  cs_1 -> cs_n [lhead=cluster_consumern ltail=cluster_consumer1 style=dashed constraint=false pendiwth=5]
+
+
+  subgraph cluster_outputStreams
+  {
+    label="Input kafka Streams"
+    rankdir = TD
+    style = invis // removes border of cluster
+    node[color = "cadetblue3" style = filled fillcolor= "cadetblue1"]
+    os1[shape = record color = "cadetblue3" style = filled fillcolor= "cadetblue1" label = "{|||||}"]
+    os2[shape = record color = "cadetblue3" style = filled fillcolor= "cadetblue1" label = "{|||||}"]
+    os3[shape = record color = "cadetblue3" style = filled fillcolor= "cadetblue1" label = "{|||||}"]
+    os4[shape = record color = "cadetblue3" style = filled fillcolor= "cadetblue1" label = "{|||||}"]
+    lbl_txt_os[style = unfilled shape = plaintext label = "Output Kafka Streams"]
+   
+    {rank = same; os1;os2;os3;os4,lbl_txt_os};
+    os1->os2->os3->os4-> lbl_txt_os [style = invis] // force label to the right. 
+  }
+
+}
+  

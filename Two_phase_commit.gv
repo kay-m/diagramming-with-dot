@@ -1,0 +1,44 @@
+// Graphviz Tutorial
+
+// The following is the flowchart for the standard TWO phase commit protocol. 
+
+// The specfification below is in the DOT language. It can be converted into a
+// diagram using the tools that come with the graphviz package. You can
+// download graphviz from https://www.graphviz.org/. Post installation, verify
+// <graphviz-installation-path>/Graphviz<ver>/bin is added to the system path.
+
+// Command to generate diagram using "dot" layout- 
+//   dot -Tpng -o Two_phase_commit.png Two_phase_commit.gv
+
+//    -Tpng creates output as an image file in the png format. Other formats
+//  supported are svg, jpg etc. 
+
+// Things you can try on your own:
+// 1. This is the flowchart for the Transaction coordinator. 
+//    Create a similar flowchart for the participating sites. 
+// 2. Use the headport and tailport attributes to make the edge flow out of 
+//    the left and right edges of the decision box in the diagram. 
+
+// Full list of color names - https://www.graphviz.org/doc/info/colors.html
+
+
+digraph m1
+{
+  node[shape="box"];
+  Wait_for_Txn[label="Wait for Txn \n to complete \n at all sites"];
+  Start_2pc[label="Initialize the \n commit protocol"];
+  Phase1_start[label="Write <Prepare T>\n message to stable log \n and then \n send to all sites", color=cornflowerblue fontcolor=cornflowerblue];
+  Phase1_Wait[label="Wait for responses from \n all participating sites \nOR\n timeout" shape="diamond" color=cornflowerblue fontcolor=cornflowerblue];
+  Phase2_Commit[label="Write <Commit T>\n message to stable log \n and send then \n send to all sites" color=forestgreen fontcolor=forestgreen];
+  Phase2_Abort[label="Write <Abort T>\n message to stable log \n and then \n send to all sites" color=forestgreen fontcolor=forestgreen];
+  Phase2_Complete_Commit[label="Inform User that transaction is committed"];
+  Phase2_Complete_Abort[label="Inform User that transaction is aborted"];
+  Wait_for_Txn -> Start_2pc;
+  Start_2pc -> Phase1_start;
+  Phase1_start -> Phase1_Wait;
+  Phase1_Wait -> Phase2_Commit[label="Received <Ready T> \n as response \n from all sites"];
+  Phase1_Wait -> Phase2_Abort[label="Timeout occured"];
+  Phase2_Commit -> Phase2_Complete_Commit;
+  Phase2_Abort -> Phase2_Complete_Abort;
+
+}

@@ -1,0 +1,39 @@
+// Graphviz Tutorial
+
+// This file is a specification for a typical Hadoop system stack.
+// The specification is based on the Hadoop system stack diagram published at:
+// https://cdn.intellipaat.com/mediaFiles/2015/07/Apache-Hadoop-Ecosystem.png 
+
+// The specfification below is in the DOT language. It can be converted into a
+// diagram using the tools that come with the graphviz package. You can
+// download graphviz from https://www.graphviz.org/. Post installation, verify
+// <graphviz-installation-path>/Graphviz<ver>/bin is added to the system path.
+
+// Command to generate diagram using "dot" layout- 
+//   dot -Tsvg -O Hadoop_stack_using_html_table.gv
+
+//    -Tsvg creates output as an image file in the svg format. Other formats
+//  supported are png, jpg etc.
+
+digraph g1
+{
+  n1[shape = none margin = 0 
+     label = <
+        <TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" CELLPADDING="4">
+          <TR ><TD COLSPAN="7" bgcolor="darkolivegreen3"> Management and Monitoring <br/> (Ambari) </TD></TR>
+          <TR><TD ROWSPAN="4" bgcolor = "cornsilk1"> Coordination <br/> (Zookeper) </TD>
+              <TD ROWSPAN="4" bgcolor = "cornsilk1"> Workflow and Scheduling <br/> (Oozie)</TD>
+          </TR> 
+          <TR> <TD bgcolor = "darkgoldenrod1"> Scripting <br/> (Pig) </TD> 
+               <TD bgcolor = "darkgoldenrod1"> Machine Learning <br/> (Mahout) </TD>
+               <TD bgcolor = "darkgoldenrod1"> Query <br/> (Hive) </TD> 
+               <TD ROWSPAN = "2" bgcolor = "cornsilk1"> NoSQL Database <br/> (HBASE) </TD> 
+               <TD ROWSPAN="3" bgcolor = "cornsilk1"> Data Integration <br/> (Sqoop/REST/ODBC) </TD>
+          </TR>
+          <TR> <TD COLSPAN = "3" bgcolor="darkolivegreen3"> Distributed Processing <br/> (Map Reduce)</TD></TR>
+          <TR> <TD COLSPAN = "4" bgcolor="darkolivegreen3"> Distributed Storage <br/> (HDFS) </TD></TR>
+        </TABLE>
+        >
+    ]
+
+}

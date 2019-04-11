@@ -1,0 +1,36 @@
+// Graphviz Tutorial
+
+// This file is a specification for a typical Hadoop system stack.
+// The specification is based on the Hadoop system stack diagram published at:
+// https://cdn.intellipaat.com/mediaFiles/2015/07/Apache-Hadoop-Ecosystem.png 
+
+// The specfification below is in the DOT language. It can be converted into a
+// diagram using the tools that come with the graphviz package. You can
+// download graphviz from https://www.graphviz.org/. Post installation, verify
+// <graphviz-installation-path>/Graphviz<ver>/bin is added to the system path.
+
+// Command to generate diagram using "dot" layout- 
+//   dot -Tsvg -O Hadoop_stack_using_record_shape.gv
+
+//    -Tsvg creates output as an image file in the svg format. Other formats
+//  supported are png, jpg etc. 
+
+digraph g1
+{
+  node [style=filled fillcolor=cornsilk1 color=coral2]
+  n1[shape="record"
+     label = "{Management and Monitoring \n (Ambari)|
+              {Coordination \n(Zookeper)|
+                Workflow & Scheduling \n(Oozie)|
+                {{{{ Scripting \n (Pig)|
+                     Machine Learning \n (Mahout) |
+                     Query \n (Hive)
+                   }|
+                   Distributed Processing (Map Reduce)
+                  }|
+                  NoSQL Database \n (HBase)}|
+                Distributed Storage \n (HDFS)}|
+              Data Integration \n (Sqoop\\REST\\odbc)}}"
+    ]
+
+}

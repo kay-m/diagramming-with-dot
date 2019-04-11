@@ -1,0 +1,73 @@
+// Graphviz Tutorial
+
+// This file is a specification for an example application that uses 
+// Apache kafka streams. The specification is based on the diagram at:
+// https://docs.confluent.io/current/streams/introduction.html
+
+// The specfification below is in the DOT language. It can be converted into a
+// diagram using the tools that come with the graphviz package. You can
+// download graphviz from https://www.graphviz.org/. Post installation, verify
+// <graphviz-installation-path>/Graphviz<ver>/bin is added to the system path.
+
+// Command to generate diagram using "dot" layout- 
+//   dot -Tsvg -O kafka_streams_introduction.gv
+
+//    -Tsvg creates output as an image file in the svg format. Other formats
+//  supported are png, jpg etc.
+
+digraph g1
+{
+  compound=true;
+
+  subgraph cluster_top_label
+  {
+    style=invis
+    top_lbl[shape=plaintext fontcolor="gray36" label=" You can run one or more instances of you App. They run \n independently but will automatically discover each other and collaborate. " ]
+  }
+
+  subgraph cluster_your_app_label
+  {
+    style=invis
+    app_lbl[label=" Your \n App" shape=plaintext]
+  }
+
+  subgraph cluster_outer
+  {
+    style=dashed
+    label="    "
+    subgraph cluster_app_inst_1
+    {
+      style=solid
+      label="App Instance 1"
+      n1[shape=polygon sides=6 label=" Kafka \n Streams \n API" style=filled fillcolor="darkorange"]
+    }
+
+    subgraph cluster_app_inst_2
+    {
+      style=solid
+      label="App Instance 2"
+      n2[shape=polygon sides=6 label=" Kafka \n Streams \n API" style=filled fillcolor="darkorange"]
+    }
+
+    subgraph cluster_app_inst_3
+    {
+      style=solid
+      label="App Instance 3"
+      n3[shape=polygon sides=6 label=" Kafka \n Streams \n API" style=filled fillcolor="darkorange"]
+    }
+
+  }
+
+  top_lbl -> n1 [lhead=cluster_outer color="gray36" headport="nw" tailport="w"]
+
+  top_lbl -> app_lbl[style="invis" color="gray36"]
+
+  n4[label="\n   Kafka    \n   Cluster    \n  " shape=box]
+
+  {n1 n2 n3} -> n4[dir=both tailport="s"]
+
+  bottom_lbl[shape=plaintext fontcolor="gray36" label=" You can elastically add and remove \n app instances during live operations. \n If one instance dies, then the other \n instances will take over its work. " ]
+  
+  n3 -> bottom_lbl[dir=back color="gray36" ltail="cluster_app_inst_3" arrowtail="vee" headport="ne"]
+
+}

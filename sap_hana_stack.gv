@@ -1,0 +1,89 @@
+// Graphviz Tutorial
+
+
+// The specfification below is in the DOT language. It can be converted into a
+// diagram using the tools that come with the graphviz package. You can
+// download graphviz from https://www.graphviz.org/. Post installation, verify
+// <graphviz-installation-path>/Graphviz<ver>/bin is added to the system path.
+
+// The diagram is based on Figure 1 in the paper
+// "Efficient Transaction Processing in SAP HANA Database – The End of a Column 
+// Store Myth" by Sikka et al. 
+
+// Command to generate diagram using "dot" layout- 
+//   dot -Tsvg -o sap_hana_stack.svg sap_hana_stack.gv
+
+//    -Tsvg creates output as an image file in the png format. Other formats
+//  supported are svg, jpg etc. 
+
+// You can divide a diagram into clusters of subgraphs. 
+// A subgraph has the following template
+//  subgraph cluster<sub-graph-name>
+//  {
+       //Nodes in subgraph
+//   }
+
+digraph g1
+{
+  node[shape=box]
+  compound=true
+  edge[arrowhead=vee arrowtail=vee]
+  // splines=line  
+
+  subgraph cluster_layer1
+  {
+    style=invis
+    bo[label="SAP Business \n Objects"];
+    bi_app[label="BI \n Applications"];
+    other_app[label=" Other \n Applications "];
+    bw[label="SAP BW"]
+    {rank=same; bo;bi_app;other_app;bw}
+  }
+  
+  subgraph cluster_layer2
+  {
+    label="SAP HANA Applicance"
+    hana_studio[label="SAP HANA \n Studio"]
+    subgraph cluster_layer2a
+    {
+      label=""
+      hana_db[label="       SAP HANA Database         "]
+      invis_point2[shape=point style=invis]
+      sap_bw_support[label="SAP BW support" style=dashed]
+      {rank=same;hana_db;sap_bw_support;invis_point2}
+      hana_db->invis_point2->sap_bw_support[style=invis]
+    }
+
+    realtime_app_services[label="    Real-time Replication      \nservices"]
+    data_services[label="      Data Services          "]
+    invis_point3[shape=point style=invis]
+    {rank=same; hana_studio}
+    {rank=same; realtime_app_services;data_services;invis_point3}
+    hana_studio -> realtime_app_services [style="invis"]
+  }
+  bo -> hana_studio [label=" BICS "  lhead=cluster_layer2 dir=both]
+  bo -> hana_studio [label=" SQL"    lhead=cluster_layer2 dir=both]
+  bi_app -> hana_db [label=" MDX"    lhead=cluster_layer2 dir=both]
+  other_app -> invis_point2 [label=" SQL" lhead=cluster_layer2 dir=both]
+  bw -> sap_bw_support [label=" SQL"  lhead=cluster_layer2 dir=both]
+  realtime_app_services -> invis_point3 -> data_services[style=invis]
+
+  subgraph cluster_layer3
+  {
+    style=invis
+    business_suite[label="SAP Business Suite"]
+    nw_bw[label="SAP NW \n BW"]
+    third_party[label="Third Party"]
+    {rank=same; business_suite;nw_bw;third_party}
+    business_suite -> nw_bw ->third_party [style=invis]
+  }
+
+  {invis_point4a invis_point4b invis_point4c invis_point4d invis_point4e [shape=point style=invis]}
+  invis_point4a-> invis_point4b-> invis_point4c-> invis_point4d-> invis_point4e [dir=none]
+  
+  realtime_app_services -> invis_point4b [dir=back]
+  data_services -> invis_point4d[dir=back]
+  invis_point4a ->  business_suite [dir=none]
+  invis_point4c -> nw_bw [dir=none]
+  invis_point4e -> third_party [dir=none]
+}

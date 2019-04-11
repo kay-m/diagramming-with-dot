@@ -1,0 +1,67 @@
+// Graphviz Tutorial
+
+// This file is a specification of the state machine executed for every
+// SQL statement during the "execute" phase by the Trafodion Database engine. 
+// The state machine is executed as a switch() statement in cli/Statement.cpp
+// Trafodion is an Apache top level project. You can check it out at 
+// https://trafodion.apache.org/
+
+// The specfification below is in the DOT language. It can be converted into a
+// diagram using the tools that come with the graphviz package. You can
+// download graphviz from https://www.graphviz.org/. Post installation, verify
+// <graphviz-installation-path>/Graphviz<ver>/bin is added to the system path.
+
+// Command to generate diagram using "dot" layout- 
+//   dot -Tsvg -o statement.svg Trafodion_stmt_execute_state_machine.gv
+
+//    -Tsvg creates output as an image file in the svg format. Other formats
+//  supported are png, jpg etc. 
+
+digraph g1
+{
+  node [color = "dodgerblue2" fontcolor="crimson"]
+  edge [color = "forestgreen" style = "dashed"]
+  
+  INITIAL_STATE_ [label = "Initial State" shape = "doublecircle"]
+  DO_SIM_CHECK_ [label = "Do Similarity \nCheck"]
+  CHECK_DYNAMIC_SETTINGS_ [label = "Check Dynamic \nSettings"]
+  FIXUP_ [label = "Fixup"]
+  FIXUP_DONE_ [label = "Fixup Done"]
+  EXECUTE_ [label = "Execute"]
+  RE_EXECUTE_[label = "Re-Execute"]
+  ERROR_ [label = "ERROR_"]
+  ERROR_RETURN_ [label = "ERROR_ Return"]
+
+  INITIAL_STATE_ -> ERROR_ [label = " (10)"]
+  INITIAL_STATE_ -> ERROR_RETURN_ [label = " (2)"]
+  INITIAL_STATE_ -> DO_SIM_CHECK_ [label = " (1)" color = "deeppink1"]
+
+  DO_SIM_CHECK_ -> ERROR_ [label = " (1)"]
+  DO_SIM_CHECK_ -> CHECK_DYNAMIC_SETTINGS_ [label = " (2)" color = "deeppink1"]
+
+  CHECK_DYNAMIC_SETTINGS_ -> FIXUP_ [label = " (1)" color = "deeppink1"]
+  CHECK_DYNAMIC_SETTINGS_ -> EXECUTE_ [label = " (1)"]
+
+  FIXUP_ -> ERROR_ [label = " (5)"]
+  FIXUP_ -> DO_SIM_CHECK_ [label = " (1)"]
+  FIXUP_ -> EXECUTE_ [label = " (1)" color = "deeppink1"]
+  FIXUP_ -> FIXUP_DONE_ [label = " (1)"]
+  FIXUP_DONE_ -> INITIAL_STATE_ [label = " (1)"]
+
+  FIXUP_DONE_ -> ERROR_RETURN_ [label = " (1)"]
+  FIXUP_ -> EXECUTE_ [label = " (1)"]
+
+  EXECUTE_ -> ERROR_ [label = " (14)"]
+  EXECUTE_ -> ERROR_RETURN_ [label = " (1)"]
+
+  RE_EXECUTE_ -> CHECK_DYNAMIC_SETTINGS_ [label = " (1)"]
+
+  ERROR_ -> ERROR_RETURN_ [label = " (1)"]
+
+  {rank="same" INITIAL_STATE_};
+  {rank="same" DO_SIM_CHECK_; CHECK_DYNAMIC_SETTINGS_};
+  {rank="same" FIXUP_; FIXUP_DONE_};
+  {rank="same" EXECUTE_; RE_EXECUTE_};
+  {rank="same" ERROR_; ERROR_RETURN_};
+
+}

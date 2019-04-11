@@ -1,0 +1,90 @@
+// Graphviz Tutorial
+
+// This file is a listing of various database management systems categorized
+// on the following properties:
+//  Row store - Does the database support a row oriented relational data model?
+//  Column store - Does the database support tables that are store in a columnar format?
+//  Key-Value stores - Ability to store key value pairs (like Redis etc)
+//  Document stores - Ability to store and query json/XML documents.
+// Within each of these categories, the following distinctions are made:
+// a. Open source vs commercial DBMS: Green colored nodes are open source products. 
+//    Orange colored ones are commercial. 
+// b. Strong verses weak consistency:  A double border indicates support for strong 
+//    consistency even in the presence of replicas. A single border indicates weak 
+//    or eventual consistency. 
+// c. Persistence: If a database is purely an in-memory database, it is indicated by
+//    a dotted border. A solid border indicates support for persistence. Persistence 
+//    can be supported either by writing all data to disk or by writing only log 
+//    records to disk. 
+// d. In-memory option: A box shaped node indicates that the database supports 
+//    caching all of the data in memory. An oval indicates a traditional database 
+//    that keeps only recently used data in its buffer cache. 
+
+// The specfification below is in the DOT language. It can be converted into a
+// diagram using the tools that come with the graphviz package. You can
+// download graphviz from https://www.graphviz.org/. Post installation, verify
+// <graphviz-installation-path>/Graphviz<ver>/bin is added to the system path.
+
+// Command to generate diagram using "dot" layout- 
+//   dot -Tsvg -O dbms_products.gv
+
+//  -Tsvg creates output as an image file in the svg format. Other formats
+//  supported are png, jpg etc.
+
+digraph g1
+{
+  
+  overlap=scalexy;  // other possible values are true, false, orthoxy, orthoyx etc..
+  // http://www.graphviz.org/doc/info/attrs.html#d:overlap 
+  //overlap_shrink=true;  If true, the overlap removal algorithm will perform a 
+  //                      compression pass to reduce the size of the layout. 
+  node[style=filled fontsize=26]
+  edge[arrowhead=vee style=dashed color=darkorchid]
+  splines=curved
+    
+
+  ignite_rs[label="Apache \nIgnite" shape=box peripheries=2 color=darkolivegreen2 fillcolor=darkolivegreen2]
+  ignite_kv[label="Apache \nIgnite" shape=box peripheries=2 color=darkolivegreen2 fillcolor=darkolivegreen2]
+  //h2_rs[label="H2" shape=box peripheries=2 peripheries=2 color=darkolivegreen2 fillcolor=darkolivegreen2]
+  memcached_kv[label="Memcached" shape=box peripheries=2 color=darkolivegreen2 fillcolor=darkolivegreen2  style="filled,dashed"]
+  //sqlite_rs[label="SQLite" shape=oval peripheries=2 color=darkolivegreen2 fillcolor=darkolivegreen2]
+  timesten_rs[label="TimesTen" shape=box peripheries=2 color=coral1 fillcolor=coral1]
+  hana_rs[label="SAP \nHANA"shape=box peripheries=2 color=coral1 fillcolor=coral1] 
+  hana_cs[label="SAP \nHANA"shape=box peripheries=2 color=coral1 fillcolor=coral1] 
+  hana_ds[label="SAP \nHANA"shape=box peripheries=2 color=coral1 fillcolor=coral1] 
+  voltdb_rs[label="VoltDB" shape=box peripheries=2 color=coral1 fillcolor=coral1]
+  redis_kv[label="Redis" shape=box peripheries=1 color=darkolivegreen2 fillcolor=darkolivegreen2]
+  postgres_rs[label="PostgreSQL" shape=oval peripheries=2 color=darkolivegreen2 fillcolor=darkolivegreen2]
+  postgres_ds[label="PostgreSQL" shape=oval peripheries=2 color=darkolivegreen2 fillcolor=darkolivegreen2]
+  mysql_rs[label="MySQL \nCommunity ed" shape=oval peripheries=2 color=darkolivegreen2 fillcolor=darkolivegreen2]
+  mysql_ds[label="MySQL \nCommunity ed" shape=oval peripheries=2 color=darkolivegreen2 fillcolor=darkolivegreen2]
+  oracle_rs[label="Oracle" shape=oval peripheries=2 color=coral1 fillcolor=coral1]
+  oracle_cs[label="Oracle" shape=oval peripheries=2 color=coral1 fillcolor=coral1]
+  oracle_ds[label="Oracle" shape=oval peripheries=2 color=coral1 fillcolor=coral1]
+  sqlserver_rs[label="SQL Server" shape=oval peripheries=2 color=coral1 fillcolor=coral1]
+  sqlserver_cs[label="SQL Server" shape=oval peripheries=2 color=coral1 fillcolor=coral1]
+  sqlserver_ds[label="SQL Server" shape=oval peripheries=2 color=coral1 fillcolor=coral1]
+  mongodb_ds[label="MongoDB" shape=oval peripheries=1 color=darkolivegreen2 fillcolor=darkolivegreen2]
+  couchdb_ds[label="CouchDB" shape=oval peripheries=1 color=darkolivegreen2 fillcolor=darkolivegreen2]
+  //cloudant_ds[label="Cloudant" shape=oval peripheries=1 color=coral1 fillcolor=coral1]
+  mariadb_rs[label="MariaDB" shape=oval peripheries=2 color=darkolivegreen2 fillcolor=darkolivegreen2]
+  mariadb_cs[label="MariaDB" shape=oval peripheries=2 color=darkolivegreen2 fillcolor=darkolivegreen2]
+  mariadb_ds[label="MariaDB" shape=oval peripheries=2 color=darkolivegreen2 fillcolor=darkolivegreen2]
+  hazelcast_kv[label="Hazelcast" shape=box peripheries=1 color=darkolivegreen2 fillcolor=darkolivegreen2 style="filled,dashed"]
+  riak_kv[label="Riak" shape=box peripheries=1 color=darkolivegreen2 fillcolor=darkolivegreen2]
+
+  dbms_products[label="DBMS \nproducts" shape=egg color=dodgerblue3 peripheries=2 fontcolor=azure fontsize=24]
+  row_store[label="Row \nStores" shape=Mcircle color=deeppink3 fontcolor=azure fontsize=24]
+  column_store[label="Columnar \nStores" shape=Mcircle color=deeppink3 fontcolor=azure fontsize=24]
+  key_value[label="Key-Value \nStores" shape=Mcircle color=deeppink3 fontcolor=azure fontsize=24]
+  doc_store[label="Document \nStores" shape=Mcircle color=deeppink3 fontcolor=azure fontsize=24]
+   
+  dbms_products -> {row_store column_store key_value doc_store} 
+  row_store -> {ignite_rs timesten_rs hana_rs voltdb_rs postgres_rs mysql_rs oracle_rs sqlserver_rs mariadb_rs}
+  column_store -> {hana_cs oracle_cs sqlserver_cs mariadb_cs}
+  key_value -> {ignite_kv memcached_kv redis_kv hazelcast_kv riak_kv}
+  doc_store -> {hana_ds postgres_ds mysql_ds oracle_ds sqlserver_ds mongodb_ds couchdb_ds mariadb_ds}
+  {rank=same row_store key_value}
+  {rank=same column_store doc_store}
+}
+  
