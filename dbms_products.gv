@@ -26,7 +26,7 @@
 // <graphviz-installation-path>/Graphviz<ver>/bin is added to the system path.
 
 // Command to generate diagram using "dot" layout- 
-//   dot -Tsvg -O dbms_products.gv
+//   neato -Tsvg -O dbms_products.gv
 
 //  -Tsvg creates output as an image file in the svg format. Other formats
 //  supported are png, jpg etc.
